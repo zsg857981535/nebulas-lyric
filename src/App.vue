@@ -1,23 +1,30 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
     <router-view/>
   </div>
 </template>
 
 <script>
+// import API from '@/request/api'
 export default {
-  name: 'App'
+  name: 'App',
+  mounted () {
+  }
 }
 </script>
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+}
+.lyric-confirm-style {
+  white-space: pre;
+  width: auto;
+  min-width: 400px;
+  height: 80%;
+}
+.lyric-confirm-style .el-message-box__content{
+  height: 100%;
+  overflow-y: scroll;
 }
 </style>
