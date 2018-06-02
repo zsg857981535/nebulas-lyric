@@ -20,15 +20,10 @@
 </template>
 
 <script>
-import { Autocomplete, Button } from 'element-ui'
 import API from '@/request/api'
 
 const CONTRCT_ADDRESS = 'n1rVLTRxQEXscTgThmbTnn2NqdWFEKwpYUM'
 export default {
-  components: {
-    Autocomplete,
-    Button
-  },
   data () {
     return {
       keywords: '',
@@ -109,7 +104,7 @@ export default {
     copyToClipBoard (lyric) {
       const input = document.createElement('input')
       input.setAttribute('readonly', 'readonly')
-      input.setAttribute('value',lyric)
+      input.setAttribute('value', lyric)
       document.body.appendChild(input)
       input.select()
       input.setSelectionRange(0, 9999)
