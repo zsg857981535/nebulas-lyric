@@ -3,8 +3,9 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import './theme/index.css'
 import { Autocomplete, Button } from 'element-ui'
-import 'element-ui/lib/theme-chalk/index.css'
+// import 'element-ui/lib/theme-chalk/index.css'
 
 Vue.component(Autocomplete.name, Autocomplete)
 Vue.component(Button.name, Button)

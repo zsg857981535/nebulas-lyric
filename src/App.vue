@@ -27,4 +27,10 @@ export default {
   height: 100%;
   overflow-y: scroll;
 }
+.lyric-confirm-style .el-message-box__content p{
+  padding: 100px 0 0;
+}
+.lyric-confirm-style .el-message-box__header {
+  display: none;
+}
 </style>

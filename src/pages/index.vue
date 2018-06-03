@@ -1,5 +1,11 @@
 <template>
   <div class="input-wrapper">
+    <div class="input-header">
+      <h1 class="css1268f443d21d160" style="color:#4560E6;">
+        星云有歌词
+      </h1>
+      <h3 style="font-family:'Malapropism';color:#4560E6;">Nebulas Lyric</h3>
+    </div>
     <el-autocomplete
       class="input-style"
       v-model="keywords"
@@ -21,6 +27,7 @@
 
 <script>
 import API from '@/request/api'
+import { MessageBox, Message, Notification } from 'element-ui'
 
 const CONTRCT_ADDRESS = 'n1rVLTRxQEXscTgThmbTnn2NqdWFEKwpYUM'
 export default {
@@ -57,7 +64,7 @@ export default {
         const { lrc: { lyric } } = res
         const _lyric = lyric.replace(/[\d\.:\[\]]/g, '')
         this.lyric = _lyric
-        this.$confirm('', '', {
+        MessageBox.confirm('', '', {
           // title: value,
           message: _lyric,
           confirmButtonText: '复制到剪贴板',
@@ -67,12 +74,12 @@ export default {
           customClass: 'lyric-confirm-style'
         }).then(() => {
           this.copyToClipBoard(this.lyric)
-          this.$message({
+          Message({
             type: 'success',
             message: '复制成功'
           })
         }).catch(() => {
-          this.$message({
+          Message({
             type: 'fail',
             message: '取消复制'
           })
@@ -114,6 +121,29 @@ export default {
       }
       document.body.removeChild(input)
     }
+  },
+  mounted () {
+    const h = this.$createElement
+    Notification({
+      title: '提示',
+      message: h('p',
+        [
+          h('span', {}, '需要安装'),
+          h('a', {
+            style: {
+              marginLeft: '10px',
+              color: '#4560E6',
+              textDecoration: 'none'
+            },
+            attrs: {
+              href: 'https://github.com/nebulasio/WebExtensionWallet'
+            }
+          },
+          'WebExtensionWallet')
+        ]
+      ),
+      duration: 0
+    })
   },
   destroyed () {
     window.removeEventListener('message', this.handleTransitonResult)
