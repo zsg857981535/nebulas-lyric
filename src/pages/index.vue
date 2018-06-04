@@ -29,7 +29,8 @@
 import API from '@/request/api'
 import { MessageBox, Message, Notification } from 'element-ui'
 
-const CONTRCT_ADDRESS = 'n1rVLTRxQEXscTgThmbTnn2NqdWFEKwpYUM'
+// const CONTRCT_ADDRESS = 'n1rVLTRxQEXscTgThmbTnn2NqdWFEKwpYUM'  //test
+const CONTRCT_ADDRESS = 'n1dtgvNzhHHfoKsY28XbtNZkdKTQsqwW4v2' // prod
 export default {
   data () {
     return {

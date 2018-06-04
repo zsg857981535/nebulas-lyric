@@ -5,6 +5,8 @@ import App from './App'
 import router from './router'
 import './theme/index.css'
 import { Autocomplete, Button } from 'element-ui'
+// import './lib/nebulas'
+
 // import 'element-ui/lib/theme-chalk/index.css'
 
 Vue.component(Autocomplete.name, Autocomplete)
