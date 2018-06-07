@@ -7,6 +7,7 @@
       <h3 style="font-family:'Malapropism';color:#4560E6;">Nebulas Lyric</h3>
     </div>
     <el-autocomplete
+      ref="input"
       class="input-style"
       v-model="keywords"
       :fetch-suggestions="querySearchAsync"
@@ -14,11 +15,14 @@
       placeholder="输入歌曲名"
       :debounce="500"
       @select="handleSelect"
+      @keypress.native="handleKeyPress"
     >
     </el-autocomplete>
     <el-button type="primary"
       icon="el-icon-search"
       @click="callWebWallet"
+      native-type="submit"
+      :disabled="!keywords"
     >
     搜索
     </el-button>
@@ -29,7 +33,7 @@
 import API from '@/request/api'
 import { MessageBox, Message, Notification } from 'element-ui'
 
-// const CONTRCT_ADDRESS = 'n1rVLTRxQEXscTgThmbTnn2NqdWFEKwpYUM'  //test
+// const CONTRCT_ADDRESS = 'n1rVLTRxQEXscTgThmbTnn2NqdWFEKwpYUM' // test
 const CONTRCT_ADDRESS = 'n1dtgvNzhHHfoKsY28XbtNZkdKTQsqwW4v2' // prod
 export default {
   data () {
@@ -52,6 +56,7 @@ export default {
           return s
         })
         this.songs = results
+        this.song = results[0] || {}
         cb(results)
       }).catch(e => {})
     },
@@ -60,21 +65,31 @@ export default {
       this.song = song
     },
     openConfirm () {
-      const { id } = this.song
-      id && API.getLyricById({ id }).then(res => {
-        const { lrc: { lyric } } = res
+      const { id, value } = this.song
+      const h = this.$createElement
+      if (!id) {
+        return Promise.reject(new Error('暂无该歌曲'))
+      }
+      return id && API.getLyricById({ id }).then(res => {
+        const { lrc: { lyric = '' } = {} } = res
+        if (!lyric) {
+          return Promise.reject(new Error('暂无该歌曲歌词'))
+        }
         const _lyric = lyric.replace(/[\d\.:\[\]]/g, '')
         this.lyric = _lyric
         MessageBox.confirm('', '', {
           // title: value,
-          message: _lyric,
+          message: h('p', [
+            h('h3', {}, value),
+            _lyric
+          ]),
           confirmButtonText: '复制到剪贴板',
           cancelButtonText: '取消',
           lockScroll: false,
           closeOnClickModal: false,
           customClass: 'lyric-confirm-style'
         }).then(() => {
-          this.copyToClipBoard(this.lyric)
+          this.copyToClipBoard(this.song.value + this.lyric)
           Message({
             type: 'success',
             message: '复制成功'
@@ -85,10 +100,13 @@ export default {
             message: '取消复制'
           })
         })
+      }).catch(e => {
+        return Promise.reject(e)
+        // console.log('===', e)
       })
     },
     callWebWallet () {
-      window.postMessage({
+      this.keywords && window.postMessage({
         'target': 'contentscript',
         'data': {
           'to': CONTRCT_ADDRESS,
@@ -105,7 +123,12 @@ export default {
     handleTransitonResult (e) {
       console.log('message received, msg.data: ' + JSON.stringify(e.data))
       if (e && e.data && e.data.data && e.data.data.txhash) {
-        this.openConfirm()
+        this.openConfirm().catch(e => {
+          Message({
+            type: 'fail',
+            message: e.message
+          })
+        })
         console.log('Transaction hash:\n' + JSON.stringify(e.data.data.txhash, null, '\t'))
       }
     },
@@ -121,6 +144,13 @@ export default {
         console.log('复制成功')
       }
       document.body.removeChild(input)
+    },
+    handleKeyPress (e) {
+      // console.log('keycode' + e.keyCode)
+      if (e.keyCode == 13) {
+        this.callWebWallet()
+        this.$refs.input.blur && this.$refs.input.blur()
+      }
     }
   },
   mounted () {
@@ -143,7 +173,7 @@ export default {
           'WebExtensionWallet')
         ]
       ),
-      duration: 0
+      duration: 5000
     })
   },
   destroyed () {
